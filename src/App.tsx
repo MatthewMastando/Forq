@@ -12,7 +12,7 @@ import { Search } from './pages/Search';
 import { ForkView } from './pages/ForkView';
 import { AuthProvider } from './context/AuthContext';
 import { RecipeProvider } from './context/RecipeContext';
-import { VercelAnalytics } from './components/VercelAnalytics';
+import { Analytics } from "@vercel/analytics/react";
 export function App() {
   return <Router>
       <AuthProvider>
@@ -35,7 +35,7 @@ export function App() {
             </main>
             <Footer />
           </div>
-          <VercelAnalytics />
+          <Analytics />
         </RecipeProvider>
       </AuthProvider>
     </Router>;
