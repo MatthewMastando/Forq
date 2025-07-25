@@ -2,15 +2,17 @@ import React, { useState, Component } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { SearchIcon, PlusIcon, UserIcon, HomeIcon, LogOutIcon, MenuIcon, XIcon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+
 export const Header: React.FC = () => {
   const {
     currentUser,
     isAuthenticated,
-    logout
+    signOut
   } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -18,7 +20,14 @@ export const Header: React.FC = () => {
       setMobileMenuOpen(false);
     }
   };
-  return <header className="glass sticky top-0 z-50 backdrop-blur-md bg-white/70 shadow-sm">
+
+  const handleSignOut = async () => {
+    await signOut();
+    setMobileMenuOpen(false);
+  };
+
+  return (
+    <header className="glass sticky top-0 z-50 backdrop-blur-md bg-white/70 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
@@ -44,26 +53,39 @@ export const Header: React.FC = () => {
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <SearchIcon className="h-5 w-5 text-gray-400" />
                 </div>
-                <input type="text" placeholder="Search recipes..." className="form-input block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white/80 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-[#E25E3E] focus:border-[#E25E3E] sm:text-sm transition-all" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+                <input
+                  type="text"
+                  placeholder="Search recipes..."
+                  className="form-input block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white/80 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-[#E25E3E] focus:border-[#E25E3E] sm:text-sm transition-all"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
             </form>
-            {isAuthenticated && currentUser ? <div className="ml-4 flex items-center md:ml-6">
+            {isAuthenticated && currentUser ? (
+              <div className="ml-4 flex items-center md:ml-6">
                 <Link to={`/profile/${currentUser.username}`} className="btn-icon p-1 rounded-full text-[#3C2A21] hover:text-[#E25E3E] focus:outline-none">
                   <img className="h-8 w-8 rounded-full ring-2 ring-[#E25E3E]/50" src={currentUser.avatar} alt={currentUser.name} />
                 </Link>
-                <button onClick={logout} className="btn-icon ml-3 p-2 rounded-full text-[#3C2A21] hover:text-[#E25E3E] focus:outline-none hidden md:block">
+                <button onClick={handleSignOut} className="btn-icon ml-3 p-2 rounded-full text-[#3C2A21] hover:text-[#E25E3E] focus:outline-none hidden md:block">
                   <LogOutIcon className="h-5 w-5" />
                 </button>
-              </div> : <div className="ml-4 flex items-center md:ml-6">
+              </div>
+            ) : (
+              <div className="ml-4 flex items-center md:ml-6">
                 <Link to="/login" className="btn-secondary text-[#E25E3E] hover:text-[#C04A2E] px-3 py-2 rounded-md text-sm font-medium hidden md:block">
                   Login
                 </Link>
                 <Link to="/register" className="btn-primary ml-2 bg-[#E25E3E]/80 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-[#E25E3E] hidden md:block">
                   Sign Up
                 </Link>
-              </div>}
+              </div>
+            )}
             {/* Mobile menu button */}
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="ml-2 md:hidden p-2 rounded-md text-[#3C2A21] hover:text-[#E25E3E] focus:outline-none">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="ml-2 md:hidden p-2 rounded-md text-[#3C2A21] hover:text-[#E25E3E] focus:outline-none"
+            >
               {mobileMenuOpen ? <XIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
             </button>
           </div>
@@ -86,30 +108,41 @@ export const Header: React.FC = () => {
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <SearchIcon className="h-5 w-5 text-gray-400" />
               </div>
-              <input type="text" placeholder="Search recipes..." className="form-input block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white/80 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-[#E25E3E] focus:border-[#E25E3E] text-sm transition-all" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+              <input
+                type="text"
+                placeholder="Search recipes..."
+                className="form-input block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white/80 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-[#E25E3E] focus:border-[#E25E3E] text-sm transition-all"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
           </form>
           {/* Mobile auth buttons */}
-          {isAuthenticated && currentUser ? <div className="px-3 py-2 flex items-center justify-between">
+          {isAuthenticated && currentUser ? (
+            <div className="px-3 py-2 flex items-center justify-between">
               <div className="flex items-center">
                 <img className="h-8 w-8 rounded-full ring-2 ring-[#E25E3E]/50 mr-2" src={currentUser.avatar} alt={currentUser.name} />
                 <span className="text-[#3C2A21]">{currentUser.name}</span>
               </div>
-              <button onClick={() => {
-            logout();
-            setMobileMenuOpen(false);
-          }} className="btn-icon p-2 rounded-full text-[#3C2A21] hover:text-[#E25E3E] focus:outline-none">
+              <button
+                onClick={handleSignOut}
+                className="text-[#3C2A21] hover:text-[#E25E3E] p-2 rounded-md"
+              >
                 <LogOutIcon className="h-5 w-5" />
               </button>
-            </div> : <div className="px-3 py-2 flex flex-col space-y-2">
-              <Link to="/login" className="btn-secondary w-full text-center text-[#E25E3E] hover:text-[#C04A2E] px-3 py-2 rounded-md text-sm font-medium" onClick={() => setMobileMenuOpen(false)}>
+            </div>
+          ) : (
+            <div className="px-3 py-2 space-y-2">
+              <Link to="/login" className="text-[#3C2A21] hover:text-[#E25E3E] block px-3 py-2 rounded-md text-base font-medium" onClick={() => setMobileMenuOpen(false)}>
                 Login
               </Link>
-              <Link to="/register" className="btn-primary w-full text-center bg-[#E25E3E]/80 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-[#E25E3E]" onClick={() => setMobileMenuOpen(false)}>
+              <Link to="/register" className="bg-[#E25E3E]/80 text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-[#E25E3E]" onClick={() => setMobileMenuOpen(false)}>
                 Sign Up
               </Link>
-            </div>}
+            </div>
+          )}
         </div>
       </div>
-    </header>;
+    </header>
+  );
 };
