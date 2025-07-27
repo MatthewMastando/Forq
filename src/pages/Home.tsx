@@ -5,20 +5,16 @@ import { RecipeCard } from '../components/RecipeCard';
 import { HeroSection } from '../components/HeroSection';
 import { users } from '../data/users';
 import { ChefHatIcon, TrendingUpIcon, ClockIcon, SearchIcon, PlusIcon, ArrowRightIcon } from 'lucide-react';
+
 export const Home: React.FC = () => {
-  const {
+    const {
     recipes,
-    forks
+    forks,
+    loading
   } = useRecipes();
   const [searchTerm, setSearchTerm] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  // Simulate loading state
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
+
+
   // Get the latest recipes
   const latestRecipes = [...recipes].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 3);
   // Get trending recipes (most forked)
@@ -53,7 +49,7 @@ export const Home: React.FC = () => {
             <ArrowRightIcon className="h-4 w-4 ml-1" />
           </Link>
         </div>
-        {isLoading ? <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {loading ? <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map(i => <div key={i} className="glass-card h-96 animate-pulse">
                 <div className="h-48 bg-gray-200 rounded-t-lg"></div>
                 <div className="p-4 space-y-3">
@@ -89,7 +85,7 @@ export const Home: React.FC = () => {
             <ArrowRightIcon className="h-4 w-4 ml-1" />
           </Link>
         </div>
-        {isLoading ? <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {loading ? <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map(i => <div key={i} className="glass-card h-96 animate-pulse">
                 <div className="h-48 bg-gray-200 rounded-t-lg"></div>
                 <div className="p-4 space-y-3">
@@ -125,7 +121,7 @@ export const Home: React.FC = () => {
             <ArrowRightIcon className="h-4 w-4 ml-1" />
           </Link>
         </div>
-        {isLoading ? <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {loading ? <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map(i => <div key={i} className="glass-card h-96 animate-pulse">
                 <div className="h-48 bg-gray-200 rounded-t-lg"></div>
                 <div className="p-4 space-y-3">

@@ -14,6 +14,7 @@ import { AuthProvider } from './context/AuthContext';
 import { RecipeProvider } from './context/RecipeContext';
 import { Analytics } from "@vercel/analytics/react";
 export function App() {
+  console.log('App component rendering');
   return <Router>
       <AuthProvider>
         <RecipeProvider>

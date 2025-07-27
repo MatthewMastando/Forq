@@ -7,28 +7,44 @@ export const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
+    
+    console.log('Login form submitted for:', email);
 
-    const { error } = await signIn(email, password);
-    
-    if (error) {
-      setError(error.message || 'Failed to sign in');
-    } else {
-      navigate('/');
+    try {
+      const { error } = await signIn(email, password);
+      
+      if (error) {
+        console.error('Login error:', error);
+        setError(error.message || 'Failed to sign in');
+      } else {
+        console.log('Login successful, navigating to home');
+        navigate('/');
+      }
+    } catch (err) {
+      console.error('Unexpected login error:', err);
+      setError('An unexpected error occurred');
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
+        {/* Debug info */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded p-2 text-xs">
+            <p>Debug: Auth Loading: {authLoading ? 'Yes' : 'No'}</p>
+            <p>Debug: Form Loading: {isLoading ? 'Yes' : 'No'}</p>
+          </div>
+        )}
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign in to your account
@@ -106,7 +122,14 @@ export const Login: React.FC = () => {
               disabled={isLoading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {isLoading ? (
+                <div className="flex items-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Signing in...
+                </div>
+              ) : (
+                'Sign in'
+              )}
             </button>
           </div>
         </form>

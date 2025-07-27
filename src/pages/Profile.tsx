@@ -4,6 +4,7 @@ import { useRecipes } from '../context/RecipeContext';
 import { useAuth } from '../context/AuthContext';
 import { RecipeCard } from '../components/RecipeCard';
 import { supabase } from '../lib/supabase';
+import { recipeService, SavedRecipe } from '../services/recipeService';
 import { UserIcon, CalendarIcon, UsersIcon, GitForkIcon, BookmarkIcon, PencilIcon } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -27,6 +28,8 @@ export const Profile: React.FC = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [savedRecipes, setSavedRecipes] = useState<SavedRecipe[]>([]);
+  const [loadingSaved, setLoadingSaved] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -57,6 +60,27 @@ export const Profile: React.FC = () => {
 
     fetchUser();
   }, [username]);
+
+  // Fetch saved recipes when tab changes or user changes
+  useEffect(() => {
+    const fetchSavedRecipes = async () => {
+      if (activeTab !== 'saved' || !user) return;
+      
+      setLoadingSaved(true);
+      try {
+        console.log('Fetching saved recipes for user:', user.id);
+        const saved = await recipeService.getSavedRecipes(user.id);
+        console.log('Fetched saved recipes:', saved);
+        setSavedRecipes(saved);
+      } catch (error) {
+        console.error('Error fetching saved recipes:', error);
+      } finally {
+        setLoadingSaved(false);
+      }
+    };
+
+    fetchSavedRecipes();
+  }, [activeTab, user]);
 
   if (loading) {
     return (
@@ -202,6 +226,18 @@ export const Profile: React.FC = () => {
               >
                 Forks ({userForks.length})
               </button>
+              {isCurrentUser && (
+                <button
+                  onClick={() => setActiveTab('saved')}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === 'saved'
+                      ? 'border-indigo-500 text-indigo-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  Saved ({savedRecipes.length})
+                </button>
+              )}
             </nav>
           </div>
 
@@ -241,6 +277,34 @@ export const Profile: React.FC = () => {
                 ) : (
                   <div className="col-span-full text-center py-8">
                     <p className="text-gray-500">No forks yet.</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'saved' && isCurrentUser && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {loadingSaved ? (
+                  <div className="col-span-full text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto"></div>
+                    <p className="text-gray-500 mt-2">Loading saved recipes...</p>
+                  </div>
+                ) : savedRecipes.length > 0 ? (
+                  savedRecipes.map((savedRecipe) => (
+                    <RecipeCard 
+                      key={savedRecipe.recipe.id} 
+                      recipe={savedRecipe.recipe} 
+                      authorName={savedRecipe.recipe.authorId === user.id ? user.name : 'Unknown'}
+                      authorAvatar={savedRecipe.recipe.authorId === user.id ? user.avatar : 'https://i.pravatar.cc/150?img=5'}
+                      forkCount={getRecipeForkCount(savedRecipe.recipe.id)}
+                    />
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-8">
+                    <BookmarkIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No saved recipes</h3>
+                    <p className="text-gray-500">Start saving recipes you love!</p>
+                    <p className="text-sm text-gray-400 mt-2">Debug: User ID: {user.id}</p>
                   </div>
                 )}
               </div>
