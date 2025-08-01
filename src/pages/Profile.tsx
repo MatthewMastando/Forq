@@ -164,10 +164,13 @@ export const Profile: React.FC = () => {
             </div>
             <div className="mt-5 flex justify-center sm:mt-0">
               {isCurrentUser ? (
-                <button className="flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                <Link
+                  to={`/profile/${user.username}/edit`}
+                  className="flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                >
                   <PencilIcon className="h-4 w-4 mr-2" />
                   Edit Profile
-                </button>
+                </Link>
               ) : (
                 <button className="flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
                   <UserIcon className="h-4 w-4 mr-2" />

@@ -6,6 +6,7 @@ import { Home } from './pages/Home';
 import { RecipeDetail } from './pages/RecipeDetail';
 import { RecipeEditor } from './pages/RecipeEditor';
 import { Profile } from './pages/Profile';
+import { ProfileEdit } from './pages/ProfileEdit';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Search } from './pages/Search';
@@ -28,6 +29,7 @@ export function App() {
                 <Route path="/create" element={<RecipeEditor />} />
                 <Route path="/edit/:id" element={<RecipeEditor />} />
                 <Route path="/profile/:username" element={<Profile />} />
+                <Route path="/profile/:username/edit" element={<ProfileEdit />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/search" element={<Search />} />
